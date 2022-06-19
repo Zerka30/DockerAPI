@@ -1,0 +1,7 @@
+docker
+flask
+bcrypt
+pyjwt
+sqlalchemy
+alembic
+pymysql
