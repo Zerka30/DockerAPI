@@ -14,7 +14,7 @@ from database.Table import AccessToken, User
 # Create Instance of Flask Server
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "c203c9b4f36f89bb2c84cff8daaa9180")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "changeme")
 
 # We have two type of token : access_token and user_token
 # access_token never expires and is used for application
@@ -58,7 +58,6 @@ def token_required(f):
                     400,
                 )
         except Exception as e:
-            raise e
             return jsonify({"status": "error", "message": "Token is invalid !"}), 400
 
     return decorated
@@ -168,7 +167,14 @@ def register(active_user):
         return jsonify({"status": "error", "message": "Invalid request"}), 400
 
     db = APIDatabase(config.DB_URL)
-    db.insert(User(username=username, password=password, permission=permission, create_token=create_token))
+    db.insert(
+        User(
+            username=username,
+            password=password,
+            permission=permission,
+            create_token=create_token,
+        )
+    )
 
     return jsonify({"status": "success", "message": "User created"})
 

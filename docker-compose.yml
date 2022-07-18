@@ -6,6 +6,7 @@ docker-api:
   ports:
     - "8000:80"
   volumes:
+    - ./entry.sh:/usr/src/app/entry.sh
     - /var/run/docker.sock:/var/run/docker.sock
 
 database:
