@@ -243,26 +243,37 @@ def get_users(user):
     return jsonify({"status": "ok", "result": data})
 
 
+def containers_status_json(container):
+    return {
+        "id": container.id,
+        "name": container.name,
+        "state": container.status,
+        "specs": {
+            "ram": container.attrs["HostConfig"]["Memory"],
+            "cpu": container.attrs["HostConfig"]["CpuShares"],
+            "image": container.attrs["Config"]["Image"],
+        },
+    }
+
+
 # Route that return every docker container name and state
 @app.route("/api/v1/status", methods=["GET"])
 @token_required
 def get_status(active_user):
+    # Verify if containers is in query has parameter
+    request_containers = []
+    if "containers" in request.args:
+        request_containers = request.args["containers"].split(",")
+
     client = docker.from_env()
     containers = client.containers.list(all=True)
     container_list = []
     for container in containers:
-        container_list.append(
-            {
-                "id": container.id,
-                "name": container.name,
-                "state": container.status,
-                "specs": {
-                    "ram": container.attrs["HostConfig"]["Memory"],
-                    "cpu": container.attrs["HostConfig"]["CpuShares"],
-                    "image": container.attrs["Config"]["Image"],
-                },
-            }
-        )
+        if not request_containers:
+            container_list.append(containers_status_json(container))
+        else:
+            if container.name in request_containers:
+                container_list.append(containers_status_json(container))
     return jsonify(container_list)
 
 
