@@ -57,7 +57,7 @@ def token_required(f):
                     jsonify({"status": "error", "message": "Invalid token type !"}),
                     400,
                 )
-        except Exception as e:
+        except Exception:
             return jsonify({"status": "error", "message": "Token is invalid !"}), 400
 
     return decorated
