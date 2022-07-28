@@ -1,0 +1,27 @@
+stages:
+  - test
+  - deploy
+variables:
+  SSH_OPTS: "-o StrictHostKeyChecking=no"
+
+python-check:
+  stage: test
+  image: registry.scouthosting.net/zerka/ci/python-check
+  script:
+    - 'flake8 --ignore=E266,E303,E501,W391,E722,W503,F403,F405 --max-line-length=110 --show-source --statistics --exclude=versions,.git ./'
+  tags:
+    - docker
+
+deploy-api:
+  stage: deploy
+  only:
+    - main
+  image: registry.scouthosting.net/zerka/ci/deploy
+  script:
+    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo -e "$SSH_PRIVATE_KEY")
+    - scp -r ${SSH_OPTS} src gitlab-ci@vps3.zerka.dev:/home/csgo/infra/api
+    - ssh gitlab-ci@vps3.zerka.dev 'cd /home/csgo/infra/ && docker-compose up -d --no-deps --build docker-api'
+  tags:
+    - docker
