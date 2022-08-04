@@ -14,7 +14,9 @@ from database.Table import AccessToken, User
 # Create Instance of Flask Server
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "changeme")
+app.config["SECRET_KEY"] = os.environ.get(
+    "SECRET_KEY", "c203c9b4f36f89bb2c84cff8daaa9180"
+)
 
 # We have two type of token : access_token and user_token
 # access_token never expires and is used for application
