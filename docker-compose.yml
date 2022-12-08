@@ -1,18 +1,19 @@
-docker-api:
-  build: ./api/src
-  restart: always
-  container_name: docker-api
-  entrypoint: python ./app.py
-  ports:
-    - "8000:80"
-  volumes:
-    - ./entry.sh:/usr/src/app/entry.sh
-    - /var/run/docker.sock:/var/run/docker.sock
+services:
+  docker-api:
+    build: ./src
+    restart: always
+    container_name: docker-api
+    entrypoint: python ./app.py
+    ports:
+      - "8000:80"
+    volumes:
+      - ./entry.sh:/usr/src/app/entry.sh
+      - /var/run/docker.sock:/var/run/docker.sock
 
-database:
-  image: mariadb
-  container_name: database
-  restart: always
-  environment:
-    MARIADB_ROOT_PASSWORD: root
-    MYSQL_DATABASE: api
+  database:
+    image: mariadb
+    container_name: database
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MYSQL_DATABASE: api
