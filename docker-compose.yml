@@ -3,6 +3,7 @@ services:
     build: ./src
     restart: always
     container_name: docker-api
+    command: bash -c "export PYTHONPATH="${PYTHONPATH}:/usr/src/app/" && echo $PYTHONPATH && cd ./database && alembic upgrade heads"
     entrypoint: python ./app.py
     ports:
       - "8000:80"
